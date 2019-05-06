@@ -1,0 +1,2 @@
+vm_deploy_become: true
+vm_deploy_become_user: root
