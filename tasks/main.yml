@@ -1,1 +1,47 @@
-# role tasks
+- include: prepare_hypervisors.yml
+  when: vm_deploy_hypervisor is defined
+
+- include: create_install_shutdown_small.yml
+  with_items:
+    - "{{ vm_deploy_small_vms }}"
+  when: vm_deploy_small_vms is defined
+
+- include: create_install_shutdown_medium.yml
+  with_items:
+    - "{{ vm_deploy_medium_vms }}"
+  when: vm_deploy_medium_vms is defined
+
+- include: create_install_shutdown_large.yml
+  with_items:
+    - "{{ vm_deploy_large_vms }}"
+  when: vm_deploy_large_vms is defined
+
+- include: verify_start_small.yml
+  with_items:
+    - "{{ vm_deploy_small_vms }}"
+  when: vm_deploy_small_vms is defined
+
+- include: verify_start_medium.yml
+  with_items:
+    - "{{ vm_deploy_medium_vms }}"
+  when: vm_deploy_medium_vms is defined
+
+- include: verify_start_large.yml
+  with_items:
+    - "{{ vm_deploy_large_vms }}"
+  when: vm_deploy_large_vms is defined
+
+- include: build_inventory_small.yml
+  with_items:
+    - "{{ vm_deploy_small_vms }}"
+  when: vm_deploy_small_vms is defined
+
+- include: build_inventory_medium.yml
+  with_items:
+    - "{{ vm_deploy_medium_vms }}"
+  when: vm_deploy_medium_vms is defined
+
+- include: build_inventory_large.yml
+  with_items:
+    - "{{ vm_deploy_large_vms }}"
+  when: vm_deploy_large_vms is defined

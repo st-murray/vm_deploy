@@ -1,0 +1,27 @@
+- name: Verify that VM {{ item.name }} has shut down after create/install
+  become: "{{ vm_deploy_become }}"
+  become_user: "{{ vm_deploy_become_user }}"
+  virt:
+    name: "{{ item.name }}"
+    command: status
+  ignore_errors: true
+  register: vm_status
+  until: "vm_status.status is defined and 'shutdown' in vm_status.status"
+  retries: 30
+  delay: 60
+
+- name: Fail if VM is still up
+  become: "{{ vm_deploy_become }}"
+  become_user: "{{ vm_deploy_become_user }}"
+  virt:
+    name: "{{ item.name }}"
+    command: status
+  register: vm_status
+  failed_when: "'running' in vm_status.status"
+
+- name: Start the VM {{ item.name }}
+  become: "{{ vm_deploy_become }}"
+  become_user: "{{ vm_deploy_become_user }}"
+  virt:
+    name: "{{ item.name }}"
+    state: running

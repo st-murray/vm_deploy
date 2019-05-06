@@ -1,0 +1,32 @@
+- name: Copy kickstart template for VM {{ item.name }}
+  become: "{{ vm_deploy_become }}"
+  become_user: "{{ vm_deploy_become_user }}"
+  template:
+    src: templates/anaconda-ks.cfg
+    dest: /anaconda-ks-{{ item.name }}.cfg
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Set options for medium vms
+  set_fact:
+    virt_install_medium:
+      virt-install
+      --name {{ item.name }}
+      --vcpus {{ vm_deploy_medium_options.vcpus }}
+      --memory {{ vm_deploy_medium_options.memory }}
+      --disk size={{ vm_deploy_medium_options.os_disk_size }}\
+      ,pool={{ vm_deploy_global_options.os_disk_pool }}
+      --os-variant {{ vm_deploy_global_options.os_variant }}
+      --graphics vnc
+      --network {{ vm_deploy_global_options.network_options }}
+      --location {{ vm_deploy_global_options.install_location }}
+      --initrd-inject=/anaconda-ks-{{ item.name }}.cfg
+      --extra-args="ks=file:/anaconda-ks-{{ item.name }}.cfg"
+      --noautoconsole
+
+- name: Create medium vms "{{ item.name }}"
+  become: "{{ vm_deploy_become }}"
+  become_user: "{{ vm_deploy_become_user }}"
+  command: "{{ virt_install_medium }}"
+  when: vm_deploy_medium_vms is defined

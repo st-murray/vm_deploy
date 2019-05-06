@@ -1,2 +1,60 @@
+# Whether or not to use the `become` feature of Ansible to gain admin
+# privileges.
 vm_deploy_become: true
+
+# Whether or not to use the `become` feature of Ansible to gain admin
+# privileges.
 vm_deploy_become_user: root
+
+# Short name of the hypervisor.
+#vm_deploy_hypervisor: ""
+
+# Domain of the vm's to be created.
+vm_deploy_domain_name: 'domain'
+
+# ssh_key: 'insert public key string for Ansible controller here'
+vm_deploy_ssh_key: ""
+
+# Virt-install options to be used for all your VM's.
+vm_deploy_global_options:
+  os_variant: rhel7
+  network_options: type=direct,source=em3,source_mode=bridge
+  install_location: ""
+  os_disk_pool: home
+  if_options: "--bootproto=dhcp --device=eth0 --ipv6=auto --activate"
+
+# Small VM specifications
+vm_deploy_small_options:
+  vcpus: 2
+  memory: 4096
+  os_disk_size: 20
+
+# Medium VM spefications
+vm_deploy_medium_options:
+  vcpus: 4
+  memory: 8192
+  os_disk_size: 40
+
+# Large VM specifications
+vm_deploy_large_options:
+  vcpus: 8
+  memory: 16384
+  os_disk_size: 60
+
+# Specify the name(s) of the small VM's to create.
+# Multiples are allowed
+#vm_deploy_small_vms:
+#  - name: "{{ vm_deploy_domain_name }}_small"
+#    type: small
+
+# Specify the name(s) of the medium VM's to create.
+# Multiples are allowed
+#vm_deploy_medium_vms:
+#  - name: "{{ vm_deploy_domain_name }}_medium"
+#    type: medium
+
+# Specify the name(s) of the large VM's to create.
+# Multiples are allowed
+#vm_deploy_large_vms:
+#  - name: "{{ vm_deploy_domain_name }}_large"
+#    type: large

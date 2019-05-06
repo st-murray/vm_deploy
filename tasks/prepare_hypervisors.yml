@@ -1,0 +1,58 @@
+- name: Install qemu-kvm
+  package:
+    name: qemu-kvm
+    state: present
+  become: "{{ vm_deploy_become }}"
+  become_user: "{{ vm_deploy_become_user }}"
+
+- name: Install libvirt
+  package:
+    name: libvirt
+    state: present
+  become: "{{ vm_deploy_become }}"
+  become_user: "{{ vm_deploy_become_user }}"
+
+- name: Install virt-install
+  package:
+    name: virt-install
+    state: present
+  become: "{{ vm_deploy_become }}"
+  become_user: "{{ vm_deploy_become_user }}"
+
+- name: Install libguestfs-tools
+  package:
+    name: libguestfs-tools
+    state: present
+  become: "{{ vm_deploy_become }}"
+  become_user: "{{ vm_deploy_become_user }}"
+
+- name: Start libvirtd
+  service:
+    name: libvirtd
+    state: started
+  become: "{{ vm_deploy_become }}"
+  become_user: "{{ vm_deploy_become_user }}"
+
+- name: Create and start storage pool
+  command: virsh pool-define-as
+    --name {{ vm_deploy_global_options.os_disk_pool }}
+    --type dir
+    --target /{{ vm_deploy_global_options.os_disk_pool }}
+  become: "{{ vm_deploy_become }}"
+  become_user: "{{ vm_deploy_become_user }}"
+  register: pool_create_out
+  failed_when: >
+    pool_create_out.rc == 1 and 'already exists' not in pool_create_out.stderr
+  changed_when: false
+
+- name: Set the storage pool to autostart
+  command: virsh pool-autostart {{ vm_deploy_global_options.os_disk_pool }}
+  become: "{{ vm_deploy_become }}"
+  become_user: "{{ vm_deploy_become_user }}"
+  changed_when: false
+
+- name: Start the storage pool
+  command: virsh pool-start {{ vm_deploy_global_options.os_disk_pool }}
+  become: "{{ vm_deploy_become }}"
+  become_user: "{{ vm_deploy_become_user }}"
+  when: pool_create_out.rc == 0
